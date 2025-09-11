@@ -1,21 +1,20 @@
 fprintf("Type the file name:");
 fileName = input('', "s");
-start = 0;
-finish = 0;
-data = parse_datafile(fileName);
+data = parseCSV(fileName);
+sizie = size(data);
 arraybian = [];
-mucus(arraybian, start, finish);
+mucus(data, arraybian, sizie);
 
-function mucus(data, arraybian, start, finish)
+function mucus(data, arraybian, sizie)
     aver = mean(data);
     cusumData = 0;
-    for(i = start:finish)
+    for(i = sizie(1):sizie(2))
         cusumData(i+1) = cusumData(i) + (data(i) - aver);
     end
-    maxi = max(abs(cusumData));
-    if(bootstrap(data) > 0.95)
-        mucus(data, arraybian, start, index(max(abs(cusumData))));
-        mucus(data, arraybian, index(max(abs(cusumData))), finish);
+    OGDiff = max(cusumData) - min(cusumData);
+    if(bootstrap(data, OGDiff) > 0.95)
+        mucus(data, arraybian, sizie(1), index(max(abs(cusumData))));
+        mucus(data, arraybian, index(max(abs(cusumData))), sizie(2));
         arraybian = index(abs(max(cusumData)));
     end
     return;
