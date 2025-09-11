@@ -12,5 +12,5 @@ function rawData = parseCSV(filename)
     end
     fclose(fid);
 
-    arrayData = cell2mat(rawData);
+    rawData = cell2mat(rawData);
 end
