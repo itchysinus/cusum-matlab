@@ -7,7 +7,8 @@ function rawData = parseCSV(filename)
     rawData = {};
     current_line = fgetl(fid);
     while ischar(current_line)
-        rawData{end+1} = current_line; % Store each line of the file
+        current_line_convert_int = str2double(current_line);
+        rawData{end+1} = current_line_convert_int; % Store each line of the file
         current_line = fgetl(fid);
     end
     fclose(fid);
