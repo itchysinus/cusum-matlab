@@ -10,11 +10,11 @@ fprintf("What is the number of bootstraps?");
 bootstraps = input('');
 data = parseCSV(fileName);
 arraybian = [];
+hold on;
+plot(data);
 mucus(data, arraybian, confidence, 1, bootstraps);
 
-function [arraybian] = mucus(data, arraybian, confidence, iteration, bootstraps)
-    hold on;
-    plot(data);
+function arraybian = mucus(data, arraybian, confidence, iteration, bootstraps)
     aver = mean(data);
     sizie = length(data);
     cusumData = zeros(1, sizie + 1);
@@ -24,9 +24,9 @@ function [arraybian] = mucus(data, arraybian, confidence, iteration, bootstraps)
     plot(cusumData);
     OGDiff = max(cusumData) - min(cusumData);
     if(bootstrap(data, OGDiff, aver, bootstraps) > confidence)
-        mucus(data(1:find(data==(max(abs(cusumData))))), arraybian, confidence, length(arraybian)+1, bootstraps);
-        mucus(data(find(data==max(abs(cusumData))):sizie), arraybian, confidence, length(arraybian)+2, bootstraps);
-        arraybian(iteration) = index(abs(max(cusumData)));
+        mucus(data(1:find(abs(cusumData)==max(abs(cusumData)))), arraybian, confidence, length(arraybian)+1, bootstraps);
+        mucus(data(find(abs(cusumData)==max(abs(cusumData))):sizie), arraybian, confidence, length(arraybian)+2, bootstraps);
+        arraybian(iteration) = find(abs(cusumData)==max(abs(cusumData)));
     end
     return;
 
