@@ -11,7 +11,9 @@ bootstraps = input('');
 data = parseCSV(fileName);
 arraybian = [];
 hold on;
-plot(data);
+yyaxis right;
+plot(data, 'b');
+yyaxis left;
 mucus(data, arraybian, confidence, 1, bootstraps);
 
 function arraybian = mucus(data, arraybian, confidence, iteration, bootstraps)
