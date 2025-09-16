@@ -9,26 +9,33 @@ end
 fprintf("What is the number of bootstraps?");
 bootstraps = input('');
 data = parseCSV(fileName);
-arraybian = [];
 hold on;
 yyaxis right;
-plot(data, 'b');
+plot(data, 'Color', [0,0.9,0.9,0.1]);
 yyaxis left;
-mucus(data, arraybian, confidence, 1, bootstraps);
+changepoints = mucus(data, confidence, bootstraps);
+for i = 1:length(changepoints)
+    fprintf("Changepoint %d: %d\n", i, changepoints(i));
+end
 
-function arraybian = mucus(data, arraybian, confidence, iteration, bootstraps)
+function changepoints = mucus(data, confidence, bootstraps)
+    changepoints = [];
     aver = mean(data);
     sizie = length(data);
     cusumData = zeros(1, sizie + 1);
     for i = 1:sizie
         cusumData(i+1) = cusumData(i) + (data(i) - aver);
     end
-    plot(cusumData);
+    
     OGDiff = max(cusumData) - min(cusumData);
     if(bootstrap(data, OGDiff, aver, bootstraps) > confidence)
-        mucus(data(1:find(abs(cusumData)==max(abs(cusumData)))), arraybian, confidence, length(arraybian)+1, bootstraps);
-        mucus(data(find(abs(cusumData)==max(abs(cusumData))):sizie), arraybian, confidence, length(arraybian)+2, bootstraps);
-        arraybian(iteration) = find(abs(cusumData)==max(abs(cusumData)));
+        plot(cusumData, '*r');
+        [~, idx] = max(abs(cusumData));
+        cp = idx - 1;
+        left = mucus(data(1:find(abs(cusumData)==max(abs(cusumData)))), confidence, bootstraps);
+        right = mucus(data(find(abs(cusumData)==max(abs(cusumData))):sizie), confidence, bootstraps);
+        right = right + cp;
+        changepoints = [left, cp, right];
     end
     return;
 
