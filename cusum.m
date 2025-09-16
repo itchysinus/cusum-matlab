@@ -1,21 +1,34 @@
 fprintf("Type the file name:");
 fileName = input('', "s");
+fprintf("What is your desired confidence interval?");
+confidence = input('');
+while confidence < 0
+    fprintf("Uh oh. That's going to be a problem. Please give a new confidence interval.");
+    confidence = input('');
+end
+fprintf("What is the number of bootstraps?");
+bootstraps = input('');
 data = parseCSV(fileName);
-sizie = size(data);
 arraybian = [];
-mucus(data, arraybian, sizie);
+hold on;
+yyaxis right;
+plot(data, 'b');
+yyaxis left;
+mucus(data, arraybian, confidence, 1, bootstraps);
 
-function mucus(data, arraybian, sizie)
+function arraybian = mucus(data, arraybian, confidence, iteration, bootstraps)
     aver = mean(data);
-    cusumData = 0;
-    for(i = sizie(1):sizie(2))
+    sizie = length(data);
+    cusumData = zeros(1, sizie + 1);
+    for i = 1:sizie
         cusumData(i+1) = cusumData(i) + (data(i) - aver);
     end
+    plot(cusumData);
     OGDiff = max(cusumData) - min(cusumData);
-    if(bootstrap(data, OGDiff) > 0.95)
-        mucus(data, arraybian, sizie(1), index(max(abs(cusumData))));
-        mucus(data, arraybian, index(max(abs(cusumData))), sizie(2));
-        arraybian = index(abs(max(cusumData)));
+    if(bootstrap(data, OGDiff, aver, bootstraps) > confidence)
+        mucus(data(1:find(abs(cusumData)==max(abs(cusumData)))), arraybian, confidence, length(arraybian)+1, bootstraps);
+        mucus(data(find(abs(cusumData)==max(abs(cusumData))):sizie), arraybian, confidence, length(arraybian)+2, bootstraps);
+        arraybian(iteration) = find(abs(cusumData)==max(abs(cusumData)));
     end
     return;
 
