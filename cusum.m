@@ -13,12 +13,12 @@ hold on;
 yyaxis right;
 plot(data, 'Color', [0,0.9,0.9,0.1]);
 yyaxis left;
-changepoints = mucus(data, confidence, bootstraps);
+changepoints = mucus(data, confidence, bootstraps, 0);
 for i = 1:length(changepoints)
     fprintf("Changepoint %d: %d\n", i, changepoints(i));
 end
 
-function changepoints = mucus(data, confidence, bootstraps)
+function changepoints = mucus(data, confidence, bootstraps, start)
     changepoints = [];
     aver = mean(data);
     sizie = length(data);
@@ -29,11 +29,12 @@ function changepoints = mucus(data, confidence, bootstraps)
     
     OGDiff = max(cusumData) - min(cusumData);
     if(bootstrap(data, OGDiff, aver, bootstraps) > confidence)
-        plot(cusumData, '*r');
+        x_vals = start + (1:sizie + 1);
+        plot(x_vals, cusumData, '*r');
         [~, idx] = max(abs(cusumData));
         cp = idx - 1;
-        left = mucus(data(1:find(abs(cusumData)==max(abs(cusumData)))), confidence, bootstraps);
-        right = mucus(data(find(abs(cusumData)==max(abs(cusumData))):sizie), confidence, bootstraps);
+        left = mucus(data(1:cp), confidence, bootstraps, start);
+        right = mucus(data(cp:end), confidence, bootstraps, cp);
         right = right + cp;
         changepoints = [left, cp, right];
     end
