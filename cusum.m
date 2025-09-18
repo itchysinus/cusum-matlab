@@ -1,23 +1,38 @@
+% Data input. Needs filename, confidence, and number of bootstraps.
 fprintf("Type the file name:");
 fileName = input('', "s");
 fprintf("What is your desired confidence interval?");
 confidence = input('');
-while confidence < 0
-    fprintf("Uh oh. That's going to be a problem. Please give a new confidence interval.");
+while confidence < 0 || confidence > 1
+    fprintf("Uh oh. That's going to be a problem. Give a confidence interval between 0 and 1.");
     confidence = input('');
 end
 fprintf("What is the number of bootstraps?");
 bootstraps = input('');
+
+% Parse the data file that has been inputted. Will fail if file does not
+% exist (see parseCSV.m)
 data = parseCSV(fileName);
+
+% Allow all plotting on a single graph
 hold on;
+% Make scale for data on right side
 yyaxis right;
+% Plot raw data
 plot(data, 'Color', [0,0.9,0.9,0.1]);
+% Put scale for everything else on the left
 yyaxis left;
+
+% Run the cusum function (called mucus b/c LOL)
 changepoints = mucus(data, confidence, bootstraps, 0);
+
+% Output changepoints
 for i = 1:length(changepoints)
     fprintf("Changepoint %d: %d\n", i, changepoints(i));
 end
 
+%% MUCUS FUNCTION
+% 
 function changepoints = mucus(data, confidence, bootstraps, start)
     changepoints = [];
     aver = mean(data);
