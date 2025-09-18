@@ -1,7 +1,7 @@
 function a = bootstrap(data, OGDiff, aver, bootstraps)
     notable = 0;
     for i = 1:bootstraps
-        newData = data(randperm(length(data)));
+        newData = fisherYatesShuffle(data);
         sizie = length(data);
         compCusum = zeros(1, sizie + 1);
         for j = 1:sizie
@@ -13,4 +13,16 @@ function a = bootstrap(data, OGDiff, aver, bootstraps)
         end
     end
     a = notable/bootstraps;
+end
+
+function shuffledArray = fisherYatesShuffle(inputArray)
+    shuffledArray = inputArray; % Initialize shuffledArray
+    n = length(inputArray); % Get the length of the input array
+    for i = n:-1:2
+        j = randi(i); % Generate a random index
+        % Swap elements
+        temp = shuffledArray(i);
+        shuffledArray(i) = shuffledArray(j);
+        shuffledArray(j) = temp;
+    end
 end
